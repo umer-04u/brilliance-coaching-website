@@ -1,52 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import AuthGuard from "@/components/AuthGuard";
-import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabaseClient";
-import EditStudentModal from "@/components/EditStudentModal";
+import Navbar from "@/components/Navbar";
 
-interface Student {
-  id: string; // ID ab UUID hai, isliye string
-  name: string;
-  email: string;
-  class: number;
-  monthly_fee: number;
-  due_fee: number;
-  joining_date: string;
-  status: "pending" | "active";
-}
-
-export default function TeacherDashboardPage() {
-  const [allStudents, setAllStudents] = useState<Student[]>([]);
+export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [studentClass, setStudentClass] = useState("");
   const [monthlyFee, setMonthlyFee] = useState("");
-  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+  const router = useRouter();
 
-  const fetchStudents = async () => {
-    const { data, error } = await supabase
-      .from("students")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (data) {
-      setAllStudents(data as Student[]);
-    }
-    if (error) {
-      toast.error("Could not fetch students.");
-    }
-  };
-
-  useEffect(() => {
-    fetchStudents();
-  }, []);
-
-  const handleAddStudent = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const loadingToast = toast.loading("Adding student...");
+    const loadingToast = toast.loading("Registering...");
 
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: email,
@@ -55,249 +25,95 @@ export default function TeacherDashboardPage() {
 
     if (authError) {
       toast.dismiss(loadingToast);
-      toast.error(`Auth Error: ${authError.message}`);
+      toast.error(authError.message);
       return;
     }
 
     if (authData.user) {
-      const monthlyFeeValue = parseFloat(monthlyFee);
+      const fee = parseFloat(monthlyFee);
       const { error: insertError } = await supabase.from("students").insert({
         id: authData.user.id,
         name: name,
         email: email,
         class: parseInt(studentClass, 10),
-        monthly_fee: monthlyFeeValue,
-        due_fee: monthlyFeeValue,
-        status: "active",
-        joining_date: new Date().toISOString(),
+        monthly_fee: fee,
+        due_fee: fee,
+        status: "pending",
       });
 
       if (insertError) {
         toast.dismiss(loadingToast);
-        toast.error(`Profile Error: ${insertError.message}`);
+        toast.error("Could not create student profile: " + insertError.message);
       } else {
         toast.dismiss(loadingToast);
-        toast.success("Student added successfully!");
-        setName("");
-        setEmail("");
-        setPassword("");
-        setStudentClass("");
-        setMonthlyFee("");
-        fetchStudents();
+        toast.success(
+          "Registration successful! Please wait for teacher approval."
+        );
+        router.push("/student-login");
       }
     }
   };
-
-  const handleApproveStudent = async (studentId: string) => {
-    const { error } = await supabase
-      .from("students")
-      .update({ status: "active", joining_date: new Date().toISOString() })
-      .eq("id", studentId);
-
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Student approved!");
-      fetchStudents();
-    }
-  };
-
-  const handleDeleteStudent = async (studentId: string) => {
-    if (
-      confirm(
-        "Are you sure? This will only delete the student record, not their login."
-      )
-    ) {
-      const { error } = await supabase
-        .from("students")
-        .delete()
-        .eq("id", studentId);
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("Student record deleted.");
-        fetchStudents();
-      }
-    }
-  };
-
-  const handleUpdateStudent = async (updatedStudent: Student) => {
-    const { error } = await supabase
-      .from("students")
-      .update({
-        name: updatedStudent.name,
-        class: updatedStudent.class,
-        monthly_fee: updatedStudent.monthly_fee,
-      })
-      .eq("id", updatedStudent.id);
-
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Student details updated!");
-      setEditingStudent(null);
-      fetchStudents();
-    }
-  };
-
-  const pendingStudents = allStudents.filter((s) => s.status === "pending");
-  const activeStudents = allStudents.filter((s) => s.status === "active");
 
   return (
-    <AuthGuard>
+    // Dekhein, yahan se <AuthGuard> hata diya gaya hai
+    <>
       <Navbar />
-      <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8 pb-12">
-        <div className="container mx-auto">
-          <h1 className="text-4xl font-bold mb-8">Teacher&apos;s Dashboard</h1>
-          <div className="bg-gray-800 p-6 rounded-lg mb-8">
-            <h2 className="text-2xl font-semibold mb-4">
-              Add New Student (Directly)
-            </h2>
-            <form
-              onSubmit={handleAddStudent}
-              className="grid grid-cols-1 md:grid-cols-6 gap-4"
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 pt-20">
+        <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+          <h1 className="text-3xl font-bold text-white text-center mb-6">
+            Student Registration
+          </h1>
+          <form className="space-y-4" onSubmit={handleSignup}>
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+            />
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+            />
+            <input
+              type="password"
+              placeholder="Create Password"
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+            />
+            <input
+              type="number"
+              placeholder="Class"
+              value={studentClass}
+              onChange={(e) => setStudentClass(e.target.value)}
+              required
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+            />
+            <input
+              type="number"
+              placeholder="Monthly Fee (e.g., 500)"
+              value={monthlyFee}
+              onChange={(e) => setMonthlyFee(e.target.value)}
+              required
+              className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+            />
+            <button
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
-              <input
-                type="text"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="bg-gray-700 p-2 rounded"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-gray-700 p-2 rounded"
-              />
-              <input
-                type="password"
-                placeholder="Set Password"
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="bg-gray-700 p-2 rounded"
-              />
-              <input
-                type="number"
-                placeholder="Class"
-                value={studentClass}
-                onChange={(e) => setStudentClass(e.target.value)}
-                required
-                className="bg-gray-700 p-2 rounded"
-              />
-              <input
-                type="number"
-                placeholder="Monthly Fee"
-                value={monthlyFee}
-                onChange={(e) => setMonthlyFee(e.target.value)}
-                required
-                className="bg-gray-700 p-2 rounded"
-              />
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 p-2 rounded"
-              >
-                Add Student
-              </button>
-            </form>
-          </div>
-
-          {pendingStudents.length > 0 && (
-            <div className="bg-yellow-900/50 p-6 rounded-lg mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-yellow-300">
-                Pending Approvals
-              </h2>
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Email</th>
-                    <th className="p-2">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pendingStudents.map((student) => (
-                    <tr key={student.id} className="border-b border-gray-700">
-                      <td className="p-2">{student.name}</td>
-                      <td className="p-2">{student.email}</td>
-                      <td className="p-2">
-                        <button
-                          onClick={() => handleApproveStudent(student.id)}
-                          className="bg-green-600 hover:bg-green-700 font-bold py-1 px-3 rounded text-xs"
-                        >
-                          Approve
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <div className="bg-gray-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4">Active Students</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Class</th>
-                    <th className="p-2">Monthly Fee</th>
-                    <th className="p-2">Current Due</th>
-                    <th className="p-2">Joining Date</th>
-                    <th className="p-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeStudents.map((student) => (
-                    <tr
-                      key={student.id}
-                      className="border-b border-gray-700 hover:bg-gray-700"
-                    >
-                      <td className="p-2">{student.name}</td>
-                      <td className="p-2">{student.class}</td>
-                      <td className="p-2">₹{student.monthly_fee}</td>
-                      <td className="p-2">₹{student.due_fee}</td>
-                      <td className="p-2">
-                        {student.joining_date
-                          ? new Date(student.joining_date).toLocaleDateString()
-                          : "N/A"}
-                      </td>
-                      <td className="p-2 flex space-x-2">
-                        <button
-                          onClick={() => setEditingStudent(student)}
-                          className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteStudent(student.id)}
-                          className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-xs"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+              Sign Up
+            </button>
+          </form>
         </div>
       </main>
-      {editingStudent && (
-        <EditStudentModal
-          student={editingStudent}
-          onClose={() => setEditingStudent(null)}
-          onSave={handleUpdateStudent}
-        />
-      )}
-    </AuthGuard>
+    </>
   );
 }
