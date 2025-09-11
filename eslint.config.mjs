@@ -24,7 +24,6 @@ export default [
       ...next.configs["core-web-vitals"].rules,
       ...hooks.configs.recommended.rules,
 
-      // --- FINAL FIX ---
       // Is rule ko error se badal kar 'off' (band) kar diya gaya hai
       "prefer-const": "off",
       // Any type ke error ko bhi ignore kar rahe hain
