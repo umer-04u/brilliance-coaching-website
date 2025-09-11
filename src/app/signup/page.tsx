@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabaseClient";
 import EditStudentModal from "@/components/EditStudentModal";
 
 interface Student {
-  id: string;
+  id: string; // ID ab UUID hai, isliye string
   name: string;
   email: string;
   class: number;
@@ -122,7 +122,6 @@ export default function TeacherDashboardPage() {
   };
 
   const handleUpdateStudent = async (updatedStudent: Student) => {
-    // <-- YAHAN BADLAAV HUA HAI
     const { error } = await supabase
       .from("students")
       .update({

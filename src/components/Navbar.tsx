@@ -1,4 +1,4 @@
-"use client"; // Navbar ko interactive banane ke liye
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -14,23 +14,17 @@ export default function Navbar() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      if (session) {
-        setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-      }
+      setIsLoggedIn(!!session);
     };
 
     checkUser();
 
-    // Yeh auth state mein badlaav ko sunta hai (login/logout)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
     });
 
-    // Component unmount hone par subscription ko saaf karta hai
     return () => {
       subscription.unsubscribe();
     };
@@ -47,38 +41,47 @@ export default function Navbar() {
         <div className="text-2xl font-bold">
           <Link href="/">Brilliance Academy</Link>
         </div>
-        <div className="space-x-8 text-lg flex items-center">
-          {/* About Us aur Contact Us ke links abhi comment out hain, aap unhe baad mein bana sakte hain */}
-          {/* <Link href="/about" className="hover:text-blue-300 transition duration-300">About Us</Link> */}
-          {/* <Link href="/contact" className="hover:text-blue-300 transition duration-300">Contact Us</Link> */}
 
-          <div className="h-6 border-l border-gray-500"></div>
-
-          {/* Yahan logic hai: Agar login hai to Logout button, warna Login links */}
+        {/* Naya HTML Structure (List) */}
+        <ul className="flex items-center gap-6 text-sm">
           {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md text-sm transition duration-300"
-            >
-              Logout
-            </button>
+            <li>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-300"
+              >
+                Logout
+              </button>
+            </li>
           ) : (
             <>
-              <Link
-                href="/student-login"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md text-sm transition duration-300"
-              >
-                Student Login
-              </Link>
-              <Link
-                href="/teacher-login"
-                className="hover:text-blue-300 transition duration-300 text-sm"
-              >
-                Teacher Login
-              </Link>
+              <li>
+                <Link
+                  href="/signup"
+                  className="hover:text-blue-300 transition duration-300"
+                >
+                  Register
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/student-login"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300"
+                >
+                  Student Login
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/teacher-login"
+                  className="hover:text-blue-300 transition duration-300"
+                >
+                  Teacher Login
+                </Link>
+              </li>
             </>
           )}
-        </div>
+        </ul>
       </nav>
     </header>
   );

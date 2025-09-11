@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Script from "next/script"; // <-- Isko import karein
+import { Toaster } from "react-hot-toast"; // Toast ke liye
+import Script from "next/script"; // Razorpay ke liye
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,12 +18,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* Razorpay ki script ko yahan add karein */}
+      {/* Razorpay Script yahan rahega */}
       <Script
         id="razorpay-checkout-js"
         src="https://checkout.razorpay.com/v1/checkout.js"
       />
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {/* Toaster yahan rahega */}
+        <Toaster position="top-center" />
+        {children}
+      </body>
     </html>
   );
 }
