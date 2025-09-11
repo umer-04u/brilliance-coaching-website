@@ -29,7 +29,6 @@ export default function StudentDashboardPage() {
     const billableMonths: string[] = [];
     const today = new Date();
     const joinDate = new Date(joiningDate);
-    // eslint-disable-next-line prefer-const
     let iteratorDate = new Date(joinDate.getFullYear(), joinDate.getMonth(), 1);
 
     while (
@@ -57,7 +56,6 @@ export default function StudentDashboardPage() {
       return;
     }
 
-    // eslint-disable-next-line prefer-const
     let { data: studentData, error } = await supabase
       .from("students")
       .select("*")
