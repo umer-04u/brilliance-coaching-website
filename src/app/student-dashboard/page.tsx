@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabaseClient";
-
+// ok
 interface StudentDetails {
   id: string;
   name: string;
