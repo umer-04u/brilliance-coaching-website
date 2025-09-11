@@ -26,11 +26,11 @@ export default function StudentDashboardPage() {
   const [dueMonths, setDueMonths] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Helper function to get all billable months since joining
   const getAllBillableMonths = (joiningDate: string) => {
     const billableMonths: string[] = [];
     const today = new Date();
     const joinDate = new Date(joiningDate);
+    // eslint-disable-next-line prefer-const
     let iteratorDate = new Date(joinDate.getFullYear(), joinDate.getMonth(), 1);
 
     while (
@@ -58,13 +58,15 @@ export default function StudentDashboardPage() {
       return;
     }
 
-    let { data: studentData, error } = await supabase
+    const { data, error: fetchError } = await supabase
       .from("students")
       .select("*")
       .eq("email", user.email)
       .single();
-    if (error || !studentData) {
-      console.error("Error fetching student details:", error);
+    let studentData = data;
+
+    if (fetchError || !studentData) {
+      console.error("Error fetching student details:", fetchError);
       setLoading(false);
       return;
     }
@@ -104,15 +106,19 @@ export default function StudentDashboardPage() {
       }
     }
 
-    setStudent(studentData);
-    if (studentData.due_fee > 0 && studentData.monthly_fee > 0) {
-      const allBillableMonths = getAllBillableMonths(studentData.joining_date);
-      const numberOfDueMonths = Math.round(
-        studentData.due_fee / studentData.monthly_fee
-      );
-      setDueMonths(allBillableMonths.slice(-numberOfDueMonths));
-    } else {
-      setDueMonths([]);
+    if (studentData) {
+      setStudent(studentData);
+      if (studentData.due_fee > 0 && studentData.monthly_fee > 0) {
+        const allBillableMonths = getAllBillableMonths(
+          studentData.joining_date
+        );
+        const numberOfDueMonths = Math.round(
+          studentData.due_fee / studentData.monthly_fee
+        );
+        setDueMonths(allBillableMonths.slice(-numberOfDueMonths));
+      } else {
+        setDueMonths([]);
+      }
     }
     setLoading(false);
   }, []);
