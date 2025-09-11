@@ -16,7 +16,6 @@ interface StudentDetails {
   last_fee_update: string;
 }
 
-// Razorpay ke response ke liye type define kiya
 interface RazorpayResponse {
   razorpay_payment_id: string;
 }
@@ -30,7 +29,6 @@ export default function StudentDashboardPage() {
     const billableMonths: string[] = [];
     const today = new Date();
     const joinDate = new Date(joiningDate);
-    // eslint-disable-next-line prefer-const
     let iteratorDate = new Date(joinDate.getFullYear(), joinDate.getMonth(), 1);
 
     while (
@@ -58,15 +56,13 @@ export default function StudentDashboardPage() {
       return;
     }
 
-    const { data, error: fetchError } = await supabase
+    let { data: studentData, error } = await supabase
       .from("students")
       .select("*")
       .eq("email", user.email)
       .single();
-    let studentData = data;
-
-    if (fetchError || !studentData) {
-      console.error("Error fetching student details:", fetchError);
+    if (error || !studentData) {
+      console.error("Error fetching student details:", error);
       setLoading(false);
       return;
     }
@@ -130,8 +126,14 @@ export default function StudentDashboardPage() {
   const makePayment = async () => {
     if (!student || student.due_fee <= 0) return;
 
+    const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    if (!razorpayKey) {
+      alert("Razorpay Key ID is not configured. Please contact support.");
+      return;
+    }
+
     const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      key: razorpayKey,
       amount: student.due_fee * 100,
       currency: "INR",
       name: "Brilliance Coaching Academy",
