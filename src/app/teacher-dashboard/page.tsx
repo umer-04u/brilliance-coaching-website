@@ -10,18 +10,17 @@ interface Student {
   name: string;
   email: string;
   class: number;
-  monthly_fee: number; // monthly_fee add kiya
+  monthly_fee: number;
   due_fee: number;
   joining_date: string;
 }
 
 export default function TeacherDashboardPage() {
   const [students, setStudents] = useState<Student[]>([]);
-  // Form ke liye state variables
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [studentClass, setStudentClass] = useState("");
-  const [monthlyFee, setMonthlyFee] = useState(""); // dueFee ki jagah monthlyFee
+  const [monthlyFee, setMonthlyFee] = useState("");
 
   const fetchStudents = async () => {
     const { data, error } = await supabase
@@ -38,23 +37,16 @@ export default function TeacherDashboardPage() {
 
   const handleAddStudent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // --- Naya Logic: Initial Due Fee Calculate Karein ---
-    const today = new Date();
     const monthlyFeeValue = parseFloat(monthlyFee);
-    let initialDueFee = 0;
-    // Agar joining date mahine ki 2 tareekh ya uske baad hai, to pehli fee agle mahine se lagegi.
-    // Hum yahan simple rakhte hain: Join karte hi us mahine ki fee due ho jaayegi.
-    // Aap is rule ko apne hisaab se badal sakte hain.
-    initialDueFee = monthlyFeeValue;
+    const initialDueFee = monthlyFeeValue;
 
     const { error } = await supabase.from("students").insert([
       {
         name: name,
         email: email,
         class: parseInt(studentClass, 10),
-        monthly_fee: monthlyFeeValue, // monthly_fee save karein
-        due_fee: initialDueFee, // calculated due_fee save karein
+        monthly_fee: monthlyFeeValue,
+        due_fee: initialDueFee,
       },
     ]);
 
@@ -79,7 +71,7 @@ export default function TeacherDashboardPage() {
       if (error) {
         alert(error.message);
       } else {
-        fetchStudents(); // List ko refresh karo
+        fetchStudents();
       }
     }
   };
@@ -89,9 +81,9 @@ export default function TeacherDashboardPage() {
       <Navbar />
       <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8">
         <div className="container mx-auto">
-          <h1 className="text-4xl font-bold mb-8">Teacher's Dashboard</h1>
+          {/* Apostrophe theek kiya gaya */}
+          <h1 className="text-4xl font-bold mb-8">Teacher&apos;s Dashboard</h1>
 
-          {/* Add Student Form Updated */}
           <div className="bg-gray-800 p-6 rounded-lg mb-8">
             <h2 className="text-2xl font-semibold mb-4">Add New Student</h2>
             <form
@@ -139,7 +131,6 @@ export default function TeacherDashboardPage() {
             </form>
           </div>
 
-          {/* Students List Updated */}
           <div className="bg-gray-800 p-6 rounded-lg">
             <h2 className="text-2xl font-semibold mb-4">Manage Students</h2>
             <div className="overflow-x-auto">

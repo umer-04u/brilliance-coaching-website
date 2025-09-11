@@ -16,11 +16,17 @@ interface StudentDetails {
   last_fee_update: string;
 }
 
+// Razorpay ke response ke liye type define kiya
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+}
+
 export default function StudentDashboardPage() {
   const [student, setStudent] = useState<StudentDetails | null>(null);
   const [dueMonths, setDueMonths] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Helper function to get all billable months since joining
   const getAllBillableMonths = (joiningDate: string) => {
     const billableMonths: string[] = [];
     const today = new Date();
@@ -65,19 +71,22 @@ export default function StudentDashboardPage() {
 
     if (!studentData.monthly_fee || studentData.monthly_fee <= 0) {
       setStudent(studentData);
+      setDueMonths([]);
       setLoading(false);
       return;
     }
 
     const lastUpdateDate = new Date(studentData.last_fee_update);
     const today = new Date();
-    let monthsToAdd = (today.getFullYear() - lastUpdateDate.getFullYear()) * 12;
-    monthsToAdd -= lastUpdateDate.getMonth();
-    monthsToAdd += today.getMonth();
+    let monthsSinceLastUpdate =
+      (today.getFullYear() - lastUpdateDate.getFullYear()) * 12;
+    monthsSinceLastUpdate -= lastUpdateDate.getMonth();
+    monthsSinceLastUpdate += today.getMonth();
 
-    let newDueFee = studentData.due_fee;
-    if (monthsToAdd > 0) {
-      newDueFee += monthsToAdd * studentData.monthly_fee;
+    if (monthsSinceLastUpdate > 0) {
+      const feeToAdd = monthsSinceLastUpdate * studentData.monthly_fee;
+      const newDueFee = studentData.due_fee + feeToAdd;
+
       const { data: updatedStudent, error: updateError } = await supabase
         .from("students")
         .update({
@@ -96,12 +105,14 @@ export default function StudentDashboardPage() {
     }
 
     setStudent(studentData);
-    if (studentData.monthly_fee > 0) {
+    if (studentData.due_fee > 0 && studentData.monthly_fee > 0) {
       const allBillableMonths = getAllBillableMonths(studentData.joining_date);
       const numberOfDueMonths = Math.round(
         studentData.due_fee / studentData.monthly_fee
       );
       setDueMonths(allBillableMonths.slice(-numberOfDueMonths));
+    } else {
+      setDueMonths([]);
     }
     setLoading(false);
   }, []);
@@ -119,7 +130,7 @@ export default function StudentDashboardPage() {
       currency: "INR",
       name: "Brilliance Coaching Academy",
       description: `Fee Payment for ${student.name}`,
-      handler: async function (response: any) {
+      handler: async function (response: RazorpayResponse) {
         alert(
           "Payment Successful! Payment ID: " + response.razorpay_payment_id
         );
