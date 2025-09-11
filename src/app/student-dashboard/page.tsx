@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabaseClient";
-// ok
+
 interface StudentDetails {
   id: string;
   name: string;
@@ -29,7 +29,11 @@ export default function StudentDashboardPage() {
     const billableMonths: string[] = [];
     const today = new Date();
     const joinDate = new Date(joiningDate);
-    let iteratorDate = new Date(joinDate.getFullYear(), joinDate.getMonth(), 1);
+    const iteratorDate = new Date(
+      joinDate.getFullYear(),
+      joinDate.getMonth(),
+      1
+    );
 
     while (
       iteratorDate.getFullYear() < today.getFullYear() ||
@@ -56,7 +60,7 @@ export default function StudentDashboardPage() {
       return;
     }
 
-    let { data: studentData, error } = await supabase
+    const { data: studentData, error } = await supabase
       .from("students")
       .select("*")
       .eq("email", user.email)
@@ -67,14 +71,19 @@ export default function StudentDashboardPage() {
       return;
     }
 
-    if (!studentData.monthly_fee || studentData.monthly_fee <= 0) {
-      setStudent(studentData);
+    let currentStudentData = studentData;
+
+    if (
+      !currentStudentData.monthly_fee ||
+      currentStudentData.monthly_fee <= 0
+    ) {
+      setStudent(currentStudentData);
       setDueMonths([]);
       setLoading(false);
       return;
     }
 
-    const lastUpdateDate = new Date(studentData.last_fee_update);
+    const lastUpdateDate = new Date(currentStudentData.last_fee_update);
     const today = new Date();
     let monthsSinceLastUpdate =
       (today.getFullYear() - lastUpdateDate.getFullYear()) * 12;
@@ -82,8 +91,8 @@ export default function StudentDashboardPage() {
     monthsSinceLastUpdate += today.getMonth();
 
     if (monthsSinceLastUpdate > 0) {
-      const feeToAdd = monthsSinceLastUpdate * studentData.monthly_fee;
-      const newDueFee = studentData.due_fee + feeToAdd;
+      const feeToAdd = monthsSinceLastUpdate * currentStudentData.monthly_fee;
+      const newDueFee = currentStudentData.due_fee + feeToAdd;
 
       const { data: updatedStudent, error: updateError } = await supabase
         .from("students")
@@ -91,25 +100,28 @@ export default function StudentDashboardPage() {
           due_fee: newDueFee,
           last_fee_update: new Date().toISOString(),
         })
-        .eq("id", studentData.id)
+        .eq("id", currentStudentData.id)
         .select()
         .single();
 
       if (updateError) {
         console.error("Error updating fee:", updateError);
-      } else {
-        studentData = updatedStudent;
+      } else if (updatedStudent) {
+        currentStudentData = updatedStudent;
       }
     }
 
-    if (studentData) {
-      setStudent(studentData);
-      if (studentData.due_fee > 0 && studentData.monthly_fee > 0) {
+    if (currentStudentData) {
+      setStudent(currentStudentData);
+      if (
+        currentStudentData.due_fee > 0 &&
+        currentStudentData.monthly_fee > 0
+      ) {
         const allBillableMonths = getAllBillableMonths(
-          studentData.joining_date
+          currentStudentData.joining_date
         );
         const numberOfDueMonths = Math.round(
-          studentData.due_fee / studentData.monthly_fee
+          currentStudentData.due_fee / currentStudentData.monthly_fee
         );
         setDueMonths(allBillableMonths.slice(-numberOfDueMonths));
       } else {
