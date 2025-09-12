@@ -18,6 +18,7 @@ export default function SignupPage() {
     e.preventDefault();
     const loadingToast = toast.loading("Registering...");
 
+    // Step 1: Create the user in Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: email,
       password: password,
@@ -29,20 +30,22 @@ export default function SignupPage() {
       return;
     }
 
+    // Step 2: If the auth user was created, insert their profile into the 'students' table
     if (authData.user) {
       const fee = parseFloat(monthlyFee);
       const { error: insertError } = await supabase.from("students").insert({
-        id: authData.user.id,
+        id: authData.user.id, // This links the student record to the auth user's UUID
         name: name,
         email: email,
         class: parseInt(studentClass, 10),
         monthly_fee: fee,
-        due_fee: fee,
-        status: "pending",
+        due_fee: fee, // First month's fee is due on signup
+        status: "pending", // New students are always 'pending'
       });
 
       if (insertError) {
         toast.dismiss(loadingToast);
+        // Note: In a real app, you might want to delete the auth user if this step fails.
         toast.error("Could not create student profile: " + insertError.message);
       } else {
         toast.dismiss(loadingToast);
@@ -55,7 +58,6 @@ export default function SignupPage() {
   };
 
   return (
-    // Dekhein, yahan se <AuthGuard> hata diya gaya hai
     <>
       <Navbar />
       <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 pt-20">
