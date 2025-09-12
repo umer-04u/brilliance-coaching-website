@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import TeachersSection from "@/components/TeachersSection";
 import CoursesSection from "@/components/CoursesSection";
+import ImageGallery from "@/components/ImageGallery";
 
 export default function HomePage() {
   return (
@@ -9,6 +10,7 @@ export default function HomePage() {
       <Navbar />
       <HeroSection />
       <TeachersSection />
+      <ImageGallery />
       <CoursesSection />
     </main>
   );
