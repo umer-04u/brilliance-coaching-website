@@ -18,44 +18,32 @@ export default function SignupPage() {
     e.preventDefault();
     const loadingToast = toast.loading("Registering...");
 
-    // Step 1: Create the user in Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // Hum ab saari details Auth ke 'data' option mein bhejenge
+    const { error } = await supabase.auth.signUp({
       email: email,
       password: password,
+      options: {
+        data: {
+          full_name: name,
+          class: parseInt(studentClass, 10),
+          monthly_fee: parseFloat(monthlyFee),
+        },
+      },
     });
 
-    if (authError) {
+    if (error) {
       toast.dismiss(loadingToast);
-      toast.error(authError.message);
-      return;
-    }
-
-    // Step 2: If the auth user was created, insert their profile into the 'students' table
-    if (authData.user) {
-      const fee = parseFloat(monthlyFee);
-      const { error: insertError } = await supabase.from("students").insert({
-        id: authData.user.id, // This links the student record to the auth user's UUID
-        name: name,
-        email: email,
-        class: parseInt(studentClass, 10),
-        monthly_fee: fee,
-        due_fee: fee, // First month's fee is due on signup
-        status: "pending", // New students are always 'pending'
-      });
-
-      if (insertError) {
-        toast.dismiss(loadingToast);
-        // Note: In a real app, you might want to delete the auth user if this step fails.
-        toast.error("Could not create student profile: " + insertError.message);
-      } else {
-        toast.dismiss(loadingToast);
-        toast.success(
-          "Registration successful! Please wait for teacher approval."
-        );
-        router.push("/student-login");
-      }
+      toast.error(error.message);
+    } else {
+      toast.dismiss(loadingToast);
+      // Ab humein yahan se students table mein insert nahi karna hai
+      toast.success(
+        "Registration successful! Please check your email to confirm."
+      );
+      router.push("/student-login");
     }
   };
+
 
   return (
     <>
