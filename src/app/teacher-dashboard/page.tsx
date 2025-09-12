@@ -145,7 +145,7 @@ export default function TeacherDashboardPage() {
   const activeStudents = allStudents.filter((s) => s.status === "active");
 
   return (
-    <AuthGuard>
+    <AuthGuard role="teacher">
       <Navbar />
       <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8 pb-12">
         <div className="container mx-auto">

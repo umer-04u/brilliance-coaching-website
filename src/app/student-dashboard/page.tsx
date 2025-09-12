@@ -185,7 +185,7 @@ export default function StudentDashboardPage() {
   }
 
   return (
-    <AuthGuard>
+    <AuthGuard role="student">
       <Navbar />
       <main className="min-h-screen bg-gray-900 text-white pt-24 px-4">
         <div className="container mx-auto">
