@@ -20,6 +20,7 @@ interface Student {
 
 export default function TeacherDashboardPage() {
   const [allStudents, setAllStudents] = useState<Student[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -122,7 +123,6 @@ export default function TeacherDashboardPage() {
   };
 
   const handleUpdateStudent = async (updatedStudent: Student) => {
-    // <-- YAHAN BADLAAV HUA HAI
     const { error } = await supabase
       .from("students")
       .update({
@@ -141,8 +141,11 @@ export default function TeacherDashboardPage() {
     }
   };
 
-  const pendingStudents = allStudents.filter((s) => s.status === "pending");
-  const activeStudents = allStudents.filter((s) => s.status === "active");
+  const filteredStudents = allStudents.filter((student) =>
+    student.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const pendingStudents = filteredStudents.filter((s) => s.status === "pending");
+  const activeStudents = filteredStudents.filter((s) => s.status === "active");
 
   return (
     <AuthGuard role="teacher">
@@ -207,7 +210,16 @@ export default function TeacherDashboardPage() {
               </button>
             </form>
           </div>
-
+          <div className="bg-gray-800 p-4 rounded-lg mb-8 flex items-center">
+            <h2 className="text-2xl font-semibold mr-4">Find Student</h2>
+            <input
+              type="text"
+              placeholder="Search students by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="bg-gray-700 p-2 rounded w-full md:w-1/3"
+            />
+          </div>
           {pendingStudents.length > 0 && (
             <div className="bg-yellow-900/50 p-6 rounded-lg mb-8">
               <h2 className="text-2xl font-semibold mb-4 text-yellow-300">
