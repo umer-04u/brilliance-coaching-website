@@ -49,7 +49,15 @@ export default function Navbar() {
               href="/about"
               className="hover:text-blue-300 transition duration-300"
             >
-              About Us 
+              About Us
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/contact"
+              className="hover:text-blue-300 transition duration-300"
+            >
+              Contact Us {/* Yeh nayi line hai */}
             </Link>
           </li>
           {isLoggedIn ? (
