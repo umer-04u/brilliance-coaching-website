@@ -21,6 +21,7 @@ interface Student {
 export default function TeacherDashboardPage() {
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [classFilter, setClassFilter] = useState("all");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -141,10 +142,19 @@ export default function TeacherDashboardPage() {
     }
   };
 
-  const filteredStudents = allStudents.filter((student) =>
-    student.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredStudents = allStudents
+    .filter((student) =>
+      student.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((student) => {
+      if (classFilter === "all") {
+        return true; // Agar 'All Classes' select hai to sabko dikhao
+      }
+      return student.class.toString() === classFilter; // Warna sirf selected class ke students dikhao
+    });
+  const pendingStudents = filteredStudents.filter(
+    (s) => s.status === "pending"
   );
-  const pendingStudents = filteredStudents.filter((s) => s.status === "pending");
   const activeStudents = filteredStudents.filter((s) => s.status === "active");
 
   return (
@@ -217,8 +227,22 @@ export default function TeacherDashboardPage() {
               placeholder="Search students by name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-gray-700 p-2 rounded w-full md:w-1/3"
+              className="bg-gray-700 p-2 rounded w-full md:w-1/3 mr-1 mask-radial-from-1"
             />
+            <select
+              value={classFilter}
+              onChange={(e) => setClassFilter(e.target.value)}
+              className="bg-gray-700 p-2 rounded mr-1"
+            >
+              <option value="all">All Classes</option>
+              <option value="6">Class 6</option>
+              <option value="7">Class 7</option>
+              <option value="8">Class 8</option>
+              <option value="9">Class 9</option>
+              <option value="10">Class 10</option>
+              <option value="11">Class 11</option>
+              <option value="12">Class 12</option>
+            </select>
           </div>
           {pendingStudents.length > 0 && (
             <div className="bg-yellow-900/50 p-6 rounded-lg mb-8">
