@@ -39,11 +39,19 @@ export default function Navbar() {
     <header className="bg-white/10 backdrop-blur-md text-white w-full fixed top-0 left-0 z-10">
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
         <div className="text-2xl font-bold">
-          <Link href="/">Brilliance Academy</Link>
+          <Link href="/">Brilliance Coaching Academy</Link>
         </div>
 
         {/* Naya HTML Structure (List) */}
         <ul className="flex items-center gap-6 text-sm">
+          <li>
+            <Link
+              href="/about"
+              className="hover:text-blue-300 transition duration-300"
+            >
+              About Us 
+            </Link>
+          </li>
           {isLoggedIn ? (
             <li>
               <button
