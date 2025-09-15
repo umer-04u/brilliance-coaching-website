@@ -1,30 +1,61 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // <-- Router import karein
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Navbar from "@/components/Navbar";
+import toast from "react-hot-toast";
+import Link from "next/link";
 
 export default function StudentLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter(); // <-- Router ko initialize karein
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
+    const loadingToast = toast.loading("Signing in...");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+    // Step 1: Check if email and password are correct
+    const { data: authData, error: authError } =
+      await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
 
-    if (error) {
-      setError(error.message);
-    } else {
-      // Login successful! Ab student dashboard par bhejo
-      router.push("/student-dashboard");
+    if (authError) {
+      toast.dismiss(loadingToast);
+      toast.error(authError.message);
+      return;
+    }
+
+    // Step 2: If login is successful, check for approval status
+    if (authData.user) {
+      const { data: studentData, error: studentError } = await supabase
+        .from("students")
+        .select("status")
+        .eq("id", authData.user.id)
+        .single();
+
+      if (studentError || !studentData) {
+        toast.dismiss(loadingToast);
+        toast.error(
+          "Could not find your student profile. Please contact support."
+        );
+        await supabase.auth.signOut();
+        return;
+      }
+
+      // Step 3: Check the status and act accordingly
+      if (studentData.status === "active") {
+        toast.dismiss(loadingToast);
+        toast.success("Login successful!");
+        router.push("/student-dashboard");
+      } else if (studentData.status === "pending") {
+        toast.dismiss(loadingToast);
+        toast.error("Your account is pending approval from a teacher.");
+        await supabase.auth.signOut();
+      }
     }
   };
 
@@ -79,8 +110,20 @@ export default function StudentLoginPage() {
                 Login
               </button>
             </div>
-            {error && <p className="mt-4 text-center text-red-400">{error}</p>}
           </form>
+
+          {/* Register Link Section */}
+          <div className="text-center mt-6">
+            <p className="text-gray-400">
+              New to the academy?{" "}
+              <Link
+                href="/signup"
+                className="font-medium text-blue-400 hover:text-blue-300"
+              >
+                Register here
+              </Link>
+            </p>
+          </div>
         </div>
       </main>
     </>

@@ -1,6 +1,10 @@
 import { serve } from "http";
 
+// Deno.Request type ko import karein (req: any error ke liye)
+import { Request } from "https://deno.land/std@0.168.0/http/server.ts";
+
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const senderEmail = "welcome@brilliance.dev";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,10 +12,11 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
+
   try {
     const { studentName, studentEmail } = await req.json();
 
@@ -22,8 +27,6 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        // --- YAHAN BADLAAV HUA HAI ---
-        // Hum Resend ka special testing email use kar rahe hain
         from: `Brilliance Coaching Academy <onboarding@resend.dev>`,
         to: [studentEmail],
         subject: `Welcome to Brilliance Coaching Academy, ${studentName}!`,
@@ -33,16 +36,16 @@ serve(async (req) => {
 
     const data = await res.json();
 
-    if (!res.ok) {
-      // Agar Resend se error aaya, to use log karo
-      console.error("Resend API Error:", data);
-    }
-
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    // 'error' is of type 'unknown' ko aup-to-date se handle karein
+    let errorMessage = "An unknown error occurred.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
