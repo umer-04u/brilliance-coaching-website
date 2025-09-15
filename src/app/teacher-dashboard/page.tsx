@@ -91,7 +91,6 @@ export default function TeacherDashboardPage() {
   };
 
   const handleApproveStudent = async (student: Student) => {
-    // Ab poora student object le rahe hain
     const { error } = await supabase
       .from("students")
       .update({ status: "active", joining_date: new Date().toISOString() })
@@ -99,23 +98,26 @@ export default function TeacherDashboardPage() {
 
     if (error) {
       toast.error(error.message);
-    } else {
-      toast.success("Student approved!");
-
-      // Naya code: Edge function ko call karein
-      const { error: funcError } = await supabase.functions.invoke(
-        "send-welcome-email",
-        {
-          body: { studentName: student.name, studentEmail: student.email },
-        }
-      );
-
-      if (funcError) {
-        toast.error("Welcome email could not be sent.");
-      }
-
-      fetchStudents();
+      return;
     }
+
+    toast.success("Student approved! Sending welcome email...");
+
+    const { error: funcError } = await supabase.functions.invoke(
+      "send-welcome-email",
+      {
+        body: { studentName: student.name, studentEmail: student.email },
+      }
+    );
+
+    if (funcError) {
+      console.error("Edge Function Error:", funcError);
+      toast.error(`Email Error: ${funcError.message}`);
+    } else {
+      toast.success("Welcome email sent successfully!");
+    }
+
+    fetchStudents();
   };
 
   const handleDeleteStudent = async (studentId: string) => {

@@ -1,9 +1,7 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "http";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const senderEmail = "welcome@brilliance.dev";
 
-// CORS headers jo browser ko permission denge
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -11,11 +9,9 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Browser dwara bheje gaye OPTIONS request ko handle karein
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-
   try {
     const { studentName, studentEmail } = await req.json();
 
@@ -26,7 +22,9 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: `Brilliance Coaching Academy <${senderEmail}>`,
+        // --- YAHAN BADLAAV HUA HAI ---
+        // Hum Resend ka special testing email use kar rahe hain
+        from: `Brilliance Coaching Academy <onboarding@resend.dev>`,
         to: [studentEmail],
         subject: `Welcome to Brilliance Coaching Academy, ${studentName}!`,
         html: `<h1>Hi ${studentName},</h1><p>Your registration has been approved. Welcome to Brilliance Coaching Academy! You can now log in to your student dashboard.</p>`,
@@ -35,14 +33,17 @@ serve(async (req) => {
 
     const data = await res.json();
 
+    if (!res.ok) {
+      // Agar Resend se error aaya, to use log karo
+      console.error("Resend API Error:", data);
+    }
+
     return new Response(JSON.stringify(data), {
-      // Har response ke saath CORS headers bhejein
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      // Error response ke saath bhi CORS headers bhejein
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
