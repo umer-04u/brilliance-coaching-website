@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
-import { FaLinkedin, FaInstagram } from "react-icons/fa"; // Twitter ki jagah Instagram import karein
+import { FaLinkedin, FaInstagram } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 interface Teacher {
@@ -12,7 +12,7 @@ interface Teacher {
   subject: string;
   imageUrl: string;
   linkedin_url?: string;
-  instagram_url?: string; // twitter_url ko instagram_url se badla
+  instagram_url?: string;
 }
 
 export default function TeachersSection() {
@@ -40,7 +40,7 @@ export default function TeachersSection() {
         >
           Meet Our Expert Teachers
         </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {teachers.map((teacher, index) => (
             <motion.div
               key={teacher.id}
@@ -48,31 +48,27 @@ export default function TeachersSection() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-gray-900 rounded-lg text-center overflow-hidden shadow-lg group"
+              className="relative rounded-lg overflow-hidden shadow-lg group h-80"
             >
-              <div className="relative h-64">
-                {/* --- IMAGE FIX: Image component ko aup-to-date props ke saath aup-to-date kiya --- */}
-                <Image
-                  src={teacher.imageUrl}
-                  alt={teacher.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6 relative">
+              <Image
+                src={teacher.imageUrl}
+                alt={teacher.name}
+                fill
+                className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+              <div className="absolute inset-0 p-6 flex flex-col justify-end">
                 <h3 className="text-2xl font-semibold text-white">
                   {teacher.name}
                 </h3>
-                <p className="text-blue-400 mb-4">{teacher.subject}</p>
-
-                {/* --- INSTAGRAM FIX: Social Media Icons ko aup-to-date kiya --- */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="text-blue-300 mb-4">{teacher.subject}</p>
+                <div className="flex justify-start gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {teacher.linkedin_url && (
                     <a
                       href={teacher.linkedin_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-blue-500"
+                      className="text-gray-300 hover:text-white"
                     >
                       <FaLinkedin size={24} />
                     </a>
@@ -82,7 +78,7 @@ export default function TeachersSection() {
                       href={teacher.instagram_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-pink-500"
+                      className="text-gray-300 hover:text-white"
                     >
                       <FaInstagram size={24} />
                     </a>
