@@ -9,9 +9,9 @@ export default function HomePage() {
     <main>
       <Navbar />
       <HeroSection />
-      <TeachersSection />
       <ImageGallery />
       <CoursesSection />
+      <TeachersSection />
     </main>
   );
 }
