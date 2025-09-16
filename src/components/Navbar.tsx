@@ -89,14 +89,6 @@ export default function Navbar() {
         <ul className="flex items-center gap-6 text-sm">
           <li>
             <Link
-              href="/about"
-              className="hover:text-blue-300 transition duration-300"
-            >
-              About Us
-            </Link>
-          </li>
-          <li>
-            <Link
               href="/contact"
               className="hover:text-blue-300 transition duration-300"
             >
