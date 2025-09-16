@@ -9,7 +9,7 @@ export default function HeroSection() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-gray-900 text-white flex items-center justify-center min-h-screen"
+      className="text-white flex items-center justify-center min-h-screen"
     >
       <div className="text-center p-6">
         {/* Heading ko animate karein */}
@@ -17,7 +17,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-5xl md:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500"
+          className="text-5xl md:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-500"
         >
           Unlock Your Potential
         </motion.h1>

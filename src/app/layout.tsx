@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google"; // Font wahi rakhein
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+ // Naya component import karein
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "Brilliance Coaching Academy",
@@ -16,10 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={inter.className}>
+    <html lang="en">
+      <body className={`${poppins.className} animate-gradient-pan`}>
         <Toaster position="top-center" />
-        {children}
+        <main className="relative z-10"> {children}</main>
       </body>
     </html>
   );
