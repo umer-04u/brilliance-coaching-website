@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google"; // Font wahi rakhein
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
- // Naya component import karein
+// Naya component import karein
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body className={`${poppins.className} animate-gradient-pan`}>
         <Toaster position="top-center" />
         <main className="relative z-10"> {children}</main>
