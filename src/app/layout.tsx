@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google"; // Font wahi rakhein
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
+import PageTransition from "@/components/PageTransition";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,7 +24,9 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className={`${poppins.className} animate-gradient-pan`}>
         <Toaster position="top-center" />
-        <main className="relative z-10"> {children}</main>
+        <main className="relative z-10">
+          <PageTransition>{children}</PageTransition>
+        </main>
         <Footer />
       </body>
     </html>

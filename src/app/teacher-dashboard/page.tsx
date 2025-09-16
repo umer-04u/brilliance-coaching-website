@@ -6,6 +6,7 @@ import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabaseClient";
 import EditStudentModal from "@/components/EditStudentModal";
+import SkeletonLoader from "@/components/SkeletonLoader";
 
 interface Student {
   id: string;
@@ -20,6 +21,7 @@ interface Student {
 
 export default function TeacherDashboardPage() {
   const [allStudents, setAllStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [classFilter, setClassFilter] = useState("all");
   const [name, setName] = useState("");
@@ -40,6 +42,7 @@ export default function TeacherDashboardPage() {
     if (error) {
       toast.error("Could not fetch students.");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -260,6 +263,10 @@ export default function TeacherDashboardPage() {
               <option value="12">Class 12</option>
             </select>
           </div>
+          {loading ? (
+            <SkeletonLoader />
+          ) : (
+            <>
           {pendingStudents.length > 0 && (
             <div className="bg-yellow-900/50 p-6 rounded-lg mb-8">
               <h2 className="text-2xl font-semibold mb-4 text-yellow-300">
@@ -342,6 +349,8 @@ export default function TeacherDashboardPage() {
               </table>
             </div>
           </div>
+          </>
+          )}
         </div>
       </main>
       {editingStudent && (
