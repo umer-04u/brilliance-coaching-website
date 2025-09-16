@@ -1,10 +1,7 @@
 import { serve } from "http";
-
-// Deno.Request type ko import karein (req: any error ke liye)
 import { Request } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const senderEmail = "welcome@brilliance.dev";
+// Brevo API key ko secrets se nikalein
+const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,19 +17,35 @@ serve(async (req: Request) => {
   try {
     const { studentName, studentEmail } = await req.json();
 
-    const res = await fetch("https://api.resend.com/emails", {
+    // Brevo ke API endpoint par request bhejein
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
+        accept: "application/json",
+        "api-key": `${BREVO_API_KEY}`, // Header ka naam badal gaya hai
+        "content-type": "application/json",
       },
+      // Body ka structure Brevo ke hisaab se badal gaya hai
       body: JSON.stringify({
-        from: `Brilliance Coaching Academy <onboarding@resend.dev>`,
-        to: [studentEmail],
+        sender: {
+          name: "Brilliance Coaching Academy",
+          email: "umerwaqar1122@gmail.com", // Aap yahan apna email daal sakte hain
+        },
+        to: [
+          {
+            email: studentEmail,
+            name: studentName,
+          },
+        ],
         subject: `Welcome to Brilliance Coaching Academy, ${studentName}!`,
-        html: `<h1>Hi ${studentName},</h1><p>Your registration has been approved. Welcome to Brilliance Coaching Academy! You can now log in to your student dashboard.</p>`,
+        htmlContent: `<h1>Hi ${studentName},</h1><p>Your registration has been approved. Welcome to Brilliance Coaching Academy! You can now log in to your student dashboard.</p>`,
       }),
     });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(JSON.stringify(errorData));
+    }
 
     const data = await res.json();
 
@@ -40,7 +53,6 @@ serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    // 'error' is of type 'unknown' ko aup-to-date se handle karein
     let errorMessage = "An unknown error occurred.";
     if (error instanceof Error) {
       errorMessage = error.message;
