@@ -27,7 +27,7 @@ serve(async (req: Request) => {
       body: JSON.stringify({
         sender: {
           name: "Brilliance Coaching Academy",
-          email: "payments@brilliance.dev",
+          email: "umerwaqar1122@gmail.com",
         },
         to: [{ email: studentEmail, name: studentName }],
         subject: `Payment Receipt for Brilliance Coaching Academy`,

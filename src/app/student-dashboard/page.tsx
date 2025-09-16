@@ -167,19 +167,56 @@ export default function StudentDashboardPage() {
       description: `Fee Payment for ${student.name}`,
       handler: async function (response: RazorpayResponse) {
         const amountThatWasPaid = student.due_fee;
-        const { error: updateError } = await supabase
-          .from("students")
-          .update({ due_fee: 0, last_fee_update: new Date().toISOString() })
-          .eq("id", student.id);
-        if (updateError) {
-          toast.error("Error updating fee status: " + updateError.message);
-        } else {
-          await supabase.from("payments").insert({
-            student_id: student.id,
-            amount_paid: amountThatWasPaid,
-            razorpay_payment_id: response.razorpay_payment_id,
-          });
-          toast.success("Payment Successful!");
+        const loadingToast = toast.loading(
+          "Verifying payment and updating records..."
+        );
+
+        try {
+          // Step 1: Update student's due fee to 0
+          const { error: updateError } = await supabase
+            .from("students")
+            .update({ due_fee: 0, last_fee_update: new Date().toISOString() })
+            .eq("id", student.id);
+
+          if (updateError) throw updateError;
+
+          // Step 2: Save the transaction to payment history
+          const { error: paymentInsertError } = await supabase
+            .from("payments")
+            .insert({
+              student_id: student.id,
+              amount_paid: amountThatWasPaid,
+              razorpay_payment_id: response.razorpay_payment_id,
+            });
+
+          if (paymentInsertError) throw paymentInsertError;
+
+          toast.dismiss(loadingToast);
+          toast.success("Payment successful! Sending receipt...");
+
+          // Step 3: Call the edge function to send the email
+          const { error: funcError } = await supabase.functions.invoke(
+            "send-receipt-email",
+            {
+              body: {
+                studentName: student.name,
+                studentEmail: student.email,
+                amountPaid: amountThatWasPaid,
+                paymentId: response.razorpay_payment_id,
+              },
+            }
+          );
+
+          if (funcError) {
+            // Email fail hone par bhi error dikhayein, lekin process na rokein
+            toast.error("Could not send receipt email.");
+            console.error("Email function error:", funcError);
+          }
+        } catch (error: any) {
+          toast.dismiss(loadingToast);
+          toast.error(`An error occurred: ${error.message}`);
+        } finally {
+          // Step 4: Sab kuch hone ke baad UI ko refresh karein
           manageStudentFees();
         }
       },
