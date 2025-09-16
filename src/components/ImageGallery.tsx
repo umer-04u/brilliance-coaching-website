@@ -1,6 +1,11 @@
-import Image from "next/image";
+"use client";
 
-// Yahan apni images ke naam daalein jo aapne public/images folder mein rakhe hain
+import React from "react";
+import Image from "next/image";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+
+// Yahan apni gallery ki images ke naam daalein
 const images = [
   "/images/classroom1.png",
   "/images/coaching1.png",
@@ -10,27 +15,33 @@ const images = [
 ];
 
 export default function ImageGallery() {
+  // Embla Carousel ko autoplay plugin ke saath set up karein
+  const [emblaRef] = useEmblaCarousel({ loop: true }, [
+    Autoplay({ delay: 3000 }),
+  ]);
+
   return (
-    <section className="bg-gray-900 py-20">
+    <section className="bg-gray-800 py-20">
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-center text-white mb-12">
-          Our Gallery
+          Glimpses of Our Academy
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {images.map((src, index) => (
-            <div
-              key={index}
-              className="overflow-hidden rounded-lg shadow-lg transform hover:scale-105 transition duration-300"
-            >
-              <Image
-                src={src}
-                alt={`Coaching gallery image ${index + 1}`}
-                width={500}
-                height={300}
-                className="object-cover w-full h-full"
-              />
-            </div>
-          ))}
+
+        <div className="embla" ref={emblaRef}>
+          <div className="embla__container">
+            {images.map((src, index) => (
+              <div className="embla__slide p-2" key={index}>
+                <div className="relative h-64 md:h-80 overflow-hidden rounded-lg">
+                  <Image
+                    src={src}
+                    alt={`Coaching gallery image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
