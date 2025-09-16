@@ -8,7 +8,7 @@ export default async function CoursesSection() {
   }
 
   return (
-    <section className="bg-gray-900 py-20">
+    <section id ="courses-section" className="bg-gray-900 py-20">
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-center text-white mb-12">
           Courses We Offer
