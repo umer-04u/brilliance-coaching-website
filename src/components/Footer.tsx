@@ -51,7 +51,7 @@ export default function Footer() {
                 href="https://www.facebook.com/share/1CAjyZTQyR/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white"
+                className="hover:text-blue-500 transition-colors duration-300"
               >
                 <FaFacebook size={24} />
               </a>
@@ -59,7 +59,7 @@ export default function Footer() {
                 href="https://www.instagram.com/the_bca_page/?igsh=MWluOXlpYnBwOXJ2dQ%3D%3D#"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white"
+                className="hover:text-pink-500 transition-colors duration-300"
               >
                 <FaInstagram size={24} />
               </a>
@@ -67,7 +67,7 @@ export default function Footer() {
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white"
+                className="hover:text-blue-500 transition-colors duration-300"
               >
                 <FaLinkedin size={24} />
               </a>

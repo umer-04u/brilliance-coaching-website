@@ -68,7 +68,7 @@ export default function TeachersSection() {
                       href={teacher.linkedin_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-300 hover:text-white"
+                      className="text-gray-300 hover:text-blue-500 transition-colors duration-300"
                     >
                       <FaLinkedin size={24} />
                     </a>
@@ -78,7 +78,7 @@ export default function TeachersSection() {
                       href={teacher.instagram_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-300 hover:text-white"
+                      className="text-gray-300 hover:text-pink-500 transition-colors duration-300"
                     >
                       <FaInstagram size={24} />
                     </a>
