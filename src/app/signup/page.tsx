@@ -31,6 +31,13 @@ export default function SignupPage() {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
+      options: {
+        data: {
+          full_name: data.name,
+          class: data.studentClass,
+          monthly_fee: data.monthlyFee,
+        },
+      },
     });
 
     if (authError) {
