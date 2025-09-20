@@ -135,7 +135,10 @@ export default function SignupPage() {
               <input
                 type="number"
                 placeholder="Class"
-                {...register("studentClass", { required: "Class is required" })}
+                {...register("studentClass", {
+                  required: "Class is required",
+                  valueAsNumber: true,
+                })}
                 className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
               />
               {errors.studentClass && (
@@ -152,6 +155,7 @@ export default function SignupPage() {
                 placeholder="Monthly Fee (e.g., 500)"
                 {...register("monthlyFee", {
                   required: "Monthly Fee is required",
+                  valueAsNumber: true,
                 })}
                 className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
               />
