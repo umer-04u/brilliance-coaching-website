@@ -4,9 +4,8 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabaseClient";
 import Navbar from "@/components/Navbar";
-import { useForm, SubmitHandler } from "react-hook-form"; // Library import karein
+import { useForm, SubmitHandler } from "react-hook-form";
 
-// Form ke data ke liye type define karein
 type FormInputs = {
   name: string;
   email: string;
@@ -17,7 +16,6 @@ type FormInputs = {
 
 export default function SignupPage() {
   const router = useRouter();
-  // useForm hook ko initialize karein
   const {
     register,
     handleSubmit,
@@ -28,7 +26,9 @@ export default function SignupPage() {
   const onFormSubmit: SubmitHandler<FormInputs> = async (data) => {
     const loadingToast = toast.loading("Registering...");
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // Hum ab saari details Auth ke 'data' option mein bhejenge
+    // Database trigger is data ka istemal karega
+    const { error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
@@ -40,33 +40,16 @@ export default function SignupPage() {
       },
     });
 
-    if (authError) {
-      toast.dismiss(loadingToast);
-      toast.error(authError.message);
-      return;
-    }
+    toast.dismiss(loadingToast);
 
-    if (authData.user) {
-      const { error: insertError } = await supabase.from("students").insert({
-        id: authData.user.id,
-        name: data.name,
-        email: data.email,
-        class: data.studentClass,
-        monthly_fee: data.monthlyFee,
-        due_fee: data.monthlyFee,
-        status: "pending",
-      });
-
-      if (insertError) {
-        toast.dismiss(loadingToast);
-        toast.error("Could not create student profile: " + insertError.message);
-      } else {
-        toast.dismiss(loadingToast);
-        toast.success(
-          "Registration successful! Please wait for teacher approval."
-        );
-        router.push("/student-login");
-      }
+    if (error) {
+      toast.error(error.message);
+    } else {
+      // Yahan hum aup-to-date message dikha rahe hain
+      toast.success(
+        "Registration successful! Please check your email to verify your account."
+      );
+      router.push("/student-login");
     }
   };
 
@@ -78,9 +61,7 @@ export default function SignupPage() {
           <h1 className="text-3xl font-bold text-white text-center mb-6">
             Student Registration
           </h1>
-          {/* handleSubmit ko yahan jodein */}
           <form className="space-y-4" onSubmit={handleSubmit(onFormSubmit)}>
-            {/* Name Input */}
             <div>
               <input
                 type="text"
@@ -95,7 +76,6 @@ export default function SignupPage() {
               )}
             </div>
 
-            {/* Email Input */}
             <div>
               <input
                 type="email"
@@ -116,7 +96,6 @@ export default function SignupPage() {
               )}
             </div>
 
-            {/* Password Input */}
             <div>
               <input
                 type="password"
@@ -137,7 +116,6 @@ export default function SignupPage() {
               )}
             </div>
 
-            {/* Class Input */}
             <div>
               <input
                 type="number"
@@ -155,7 +133,6 @@ export default function SignupPage() {
               )}
             </div>
 
-            {/* Monthly Fee Input */}
             <div>
               <input
                 type="number"
