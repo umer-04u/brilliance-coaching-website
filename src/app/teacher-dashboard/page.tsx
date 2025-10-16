@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabaseClient";
 import EditStudentModal from "@/components/EditStudentModal";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import Link from 'next/link';
+import Pagination from "@/components/Pagination";
 
 interface Student {
   id: string;
@@ -34,6 +35,7 @@ export default function TeacherDashboardPage() {
   const [feeSubject, setFeeSubject] = useState("");
   const [feeAmount, setFeeAmount] = useState("");
   const [feesList, setFeesList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
 
   const fetchStudents = async () => {
@@ -208,7 +210,19 @@ export default function TeacherDashboardPage() {
     (s) => s.status === "pending"
   );
   const activeStudents = filteredStudents.filter((s) => s.status === "active");
+  // --- Pagination Logic ---
+  const STUDENTS_PER_PAGE = 10;
+  const indexOfLastStudent = currentPage * STUDENTS_PER_PAGE;
+  const indexOfFirstStudent = indexOfLastStudent - STUDENTS_PER_PAGE;
 
+  // Yahan hum sirf current page ke active students ko nikal rahe hain
+  const currentActiveStudents = activeStudents.slice(
+    indexOfFirstStudent,
+    indexOfLastStudent
+  );
+
+  // Page badalne ke liye function
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   return (
     <AuthGuard role="teacher">
       <Navbar />
@@ -401,7 +415,7 @@ export default function TeacherDashboardPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {activeStudents.map((student) => (
+                      {currentActiveStudents.map((student) => (
                         <tr
                           key={student.id}
                           className="border-b border-gray-700 hover:bg-gray-700"
@@ -442,6 +456,12 @@ export default function TeacherDashboardPage() {
                       ))}
                     </tbody>
                   </table>
+                  <Pagination
+                    itemsPerPage={STUDENTS_PER_PAGE}
+                    totalItems={activeStudents.length}
+                    paginate={paginate}
+                    currentPage={currentPage}
+                  />
                 </div>
               </div>
             </>
