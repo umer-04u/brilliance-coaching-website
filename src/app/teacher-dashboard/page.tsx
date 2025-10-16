@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabaseClient";
 import EditStudentModal from "@/components/EditStudentModal";
 import SkeletonLoader from "@/components/SkeletonLoader";
+import Link from 'next/link';
 
 interface Student {
   id: string;
@@ -29,6 +30,10 @@ export default function TeacherDashboardPage() {
   const [password, setPassword] = useState("");
   const [studentClass, setStudentClass] = useState("");
   const [monthlyFee, setMonthlyFee] = useState("");
+  const [feeClass, setFeeClass] = useState("");
+  const [feeSubject, setFeeSubject] = useState("");
+  const [feeAmount, setFeeAmount] = useState("");
+  const [feesList, setFeesList] = useState([]);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
 
   const fetchStudents = async () => {
@@ -45,9 +50,37 @@ export default function TeacherDashboardPage() {
     setLoading(false);
   };
 
+  const fetchFees = async () => {
+    const { data } = await supabase.from("fees").select("*");
+    if (data) setFeesList(data as any);
+  };
+
   useEffect(() => {
     fetchStudents();
+    fetchFees();
   }, []);
+
+  const handleSetFee = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { error } = await supabase.from("fees").upsert(
+      {
+        class: parseInt(feeClass, 10),
+        subject: feeSubject,
+        amount: parseFloat(feeAmount),
+      },
+      { onConflict: "class,subject" }
+    );
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Fee updated successfully!");
+      setFeeClass("");
+      setFeeSubject("");
+      setFeeAmount("");
+      fetchFees();
+    }
+  };
 
   const handleAddStudent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -239,6 +272,56 @@ export default function TeacherDashboardPage() {
               </button>
             </form>
           </div>
+          <div className="bg-gray-800 p-6 rounded-lg mb-8">
+            <h2 className="text-2xl font-semibold mb-4">Set/Update Fees</h2>
+            <form
+              onSubmit={handleSetFee}
+              className="grid grid-cols-1 md:grid-cols-4 gap-4"
+            >
+              <input
+                type="number"
+                placeholder="Class (e.g., 11)"
+                value={feeClass}
+                onChange={(e) => setFeeClass(e.target.value)}
+                required
+                className="bg-gray-700 p-2 rounded"
+              />
+              <input
+                type="text"
+                placeholder="Subject (e.g., Physics)"
+                value={feeSubject}
+                onChange={(e) => setFeeSubject(e.target.value)}
+                required
+                className="bg-gray-700 p-2 rounded"
+              />
+              <input
+                type="number"
+                placeholder="Amount (e.g., 500)"
+                value={feeAmount}
+                onChange={(e) => setFeeAmount(e.target.value)}
+                required
+                className="bg-gray-700 p-2 rounded"
+              />
+              <button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 p-2 rounded"
+              >
+                Set Fee
+              </button>
+            </form>
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold mb-2">
+                Current Fee Structure:
+              </h3>
+              <ul className="list-disc list-inside">
+                {feesList.map((fee: any) => (
+                  <li key={fee.id}>
+                    Class {fee.class}, {fee.subject}: ₹{fee.amount}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
           <div className="bg-gray-800 p-4 rounded-lg mb-8 flex items-center">
             <h2 className="text-2xl font-semibold mr-4">Find Student</h2>
             <input
@@ -267,89 +350,101 @@ export default function TeacherDashboardPage() {
             <SkeletonLoader />
           ) : (
             <>
-          {pendingStudents.length > 0 && (
-            <div className="bg-yellow-900/50 p-6 rounded-lg mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-yellow-300">
-                Pending Approvals
-              </h2>
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Email</th>
-                    <th className="p-2">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pendingStudents.map((student) => (
-                    <tr key={student.id} className="border-b border-gray-700">
-                      <td className="p-2">{student.name}</td>
-                      <td className="p-2">{student.email}</td>
-                      <td className="p-2">
-                        <button
-                          onClick={() => handleApproveStudent(student)}
-                          className="bg-green-600 hover:bg-green-700 font-bold py-1 px-3 rounded text-xs"
+              {pendingStudents.length > 0 && (
+                <div className="bg-yellow-900/50 p-6 rounded-lg mb-8">
+                  <h2 className="text-2xl font-semibold mb-4 text-yellow-300">
+                    Pending Approvals
+                  </h2>
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b border-gray-700">
+                        <th className="p-2">Name</th>
+                        <th className="p-2">Email</th>
+                        <th className="p-2">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pendingStudents.map((student) => (
+                        <tr
+                          key={student.id}
+                          className="border-b border-gray-700"
                         >
-                          Approve
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                          <td className="p-2">{student.name}</td>
+                          <td className="p-2">{student.email}</td>
+                          <td className="p-2">
+                            <button
+                              onClick={() => handleApproveStudent(student)}
+                              className="bg-green-600 hover:bg-green-700 font-bold py-1 px-3 rounded text-xs"
+                            >
+                              Approve
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
-          <div className="bg-gray-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4">Active Students</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Class</th>
-                    <th className="p-2">Monthly Fee</th>
-                    <th className="p-2">Current Due</th>
-                    <th className="p-2">Joining Date</th>
-                    <th className="p-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeStudents.map((student) => (
-                    <tr
-                      key={student.id}
-                      className="border-b border-gray-700 hover:bg-gray-700"
-                    >
-                      <td className="p-2">{student.name}</td>
-                      <td className="p-2">{student.class}</td>
-                      <td className="p-2">₹{student.monthly_fee}</td>
-                      <td className="p-2">₹{student.due_fee}</td>
-                      <td className="p-2">
-                        {student.joining_date
-                          ? new Date(student.joining_date).toLocaleDateString()
-                          : "N/A"}
-                      </td>
-                      <td className="p-2 flex space-x-2">
-                        <button
-                          onClick={() => setEditingStudent(student)}
-                          className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs"
+              <div className="bg-gray-800 p-6 rounded-lg">
+                <h2 className="text-2xl font-semibold mb-4">Active Students</h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b border-gray-700">
+                        <th className="p-2">Name</th>
+                        <th className="p-2">Class</th>
+                        <th className="p-2">Monthly Fee</th>
+                        <th className="p-2">Current Due</th>
+                        <th className="p-2">Joining Date</th>
+                        <th className="p-2">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeStudents.map((student) => (
+                        <tr
+                          key={student.id}
+                          className="border-b border-gray-700 hover:bg-gray-700"
                         >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteStudent(student.id)}
-                          className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-xs"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          </>
+                          <td className="p-2">
+                            <Link
+                              href={`/teacher-dashboard/student/${student.id}`}
+                              className="text-blue-400 hover:underline"
+                            >
+                              {student.name}
+                            </Link>
+                          </td>
+                          <td className="p-2">{student.class}</td>
+                          <td className="p-2">₹{student.monthly_fee}</td>
+                          <td className="p-2">₹{student.due_fee}</td>
+                          <td className="p-2">
+                            {student.joining_date
+                              ? new Date(
+                                  student.joining_date
+                                ).toLocaleDateString()
+                              : "N/A"}
+                          </td>
+                          <td className="p-2 flex space-x-2">
+                            <button
+                              onClick={() => setEditingStudent(student)}
+                              className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteStudent(student.id)}
+                              className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-xs"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </main>

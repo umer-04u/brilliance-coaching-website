@@ -1,17 +1,19 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabaseClient";
 import Navbar from "@/components/Navbar";
 import { useForm, SubmitHandler } from "react-hook-form";
 
+// Form ke data ke liye type define karein
 type FormInputs = {
   name: string;
   email: string;
   password: string;
   studentClass: number;
-  monthlyFee: number;
+  selectedSubject: string;
 };
 
 export default function SignupPage() {
@@ -19,15 +21,32 @@ export default function SignupPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormInputs>();
+
+  const [availableFees, setAvailableFees] = useState<
+    { class: number; subject: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchAvailableFees = async () => {
+      const { data } = await supabase.from("fees").select("class, subject");
+      if (data) {
+        setAvailableFees(data);
+      }
+    };
+    fetchAvailableFees();
+  }, []);
+
+  const selectedClass = watch("studentClass");
 
   // Form submit hone par yeh function chalega
   const onFormSubmit: SubmitHandler<FormInputs> = async (data) => {
     const loadingToast = toast.loading("Registering...");
 
-    // Hum ab saari details Auth ke 'data' option mein bhejenge
-    // Database trigger is data ka istemal karega
+    // --- FINAL FIX: Yahan 'options.data' add kiya gaya hai ---
+    // Yeh form ka saara data database trigger tak bhejega
     const { error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -35,7 +54,7 @@ export default function SignupPage() {
         data: {
           full_name: data.name,
           class: data.studentClass,
-          monthly_fee: data.monthlyFee,
+          subject: data.selectedSubject,
         },
       },
     });
@@ -45,7 +64,6 @@ export default function SignupPage() {
     if (error) {
       toast.error(error.message);
     } else {
-      // Yahan hum aup-to-date message dikha rahe hain
       toast.success(
         "Registration successful! Please check your email to verify your account."
       );
@@ -134,18 +152,24 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <input
-                type="number"
-                placeholder="Monthly Fee (e.g., 500)"
-                {...register("monthlyFee", {
-                  required: "Monthly Fee is required",
-                  valueAsNumber: true,
+              <select
+                {...register("selectedSubject", {
+                  required: "Subject is required",
                 })}
                 className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
-              />
-              {errors.monthlyFee && (
+              >
+                <option value="">Select Subject</option>
+                {availableFees
+                  .filter((fee) => fee.class === selectedClass)
+                  .map((fee) => (
+                    <option key={fee.subject} value={fee.subject}>
+                      {fee.subject}
+                    </option>
+                  ))}
+              </select>
+              {errors.selectedSubject && (
                 <p className="text-red-400 text-xs mt-1">
-                  {errors.monthlyFee.message}
+                  {errors.selectedSubject.message}
                 </p>
               )}
             </div>
