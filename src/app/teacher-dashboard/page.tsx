@@ -159,20 +159,34 @@ export default function TeacherDashboardPage() {
   };
 
   const handleDeleteStudent = async (studentId: string) => {
+    // Confirmation prompt remains the same
     if (
       confirm(
-        "Are you sure? This will only delete the student record, not their login."
+        "Are you sure? This will permanently delete the student's record AND their login account."
       )
     ) {
-      const { error } = await supabase
-        .from("students")
-        .delete()
-        .eq("id", studentId);
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("Student record deleted.");
-        fetchStudents();
+      const loadingToast = toast.loading("Deleting student...");
+      try {
+        // --- YAHAN API ROUTE CALL HO RAHA HAI ---
+        const response = await fetch("/api/delete-student", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ studentId: studentId }), // API route ko student ka ID bhejein
+        });
+
+        const result = await response.json();
+
+        // Check karein ki API route ne success message bheja ya error
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to delete student via API");
+        }
+
+        toast.dismiss(loadingToast);
+        toast.success("Student and their login deleted successfully.");
+        fetchStudents(); // List ko refresh karein
+      } catch (error: any) {
+        toast.dismiss(loadingToast);
+        toast.error(`Deletion failed: ${error.message}`);
       }
     }
   };
