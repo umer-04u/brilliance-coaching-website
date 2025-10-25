@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
-import AuthTokenHandler from "@/components/AuthTokenHandler";
+
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,7 +24,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${poppins.className} animate-gradient-pan`}>
-        <AuthTokenHandler />
         <Toaster position="top-center" />
         <main className="relative z-10">
           <PageTransition>{children}</PageTransition>
