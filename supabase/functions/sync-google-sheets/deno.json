@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "http": "https://deno.land/std@0.168.0/http/server.ts",
+    "createClient": "https://esm.sh/@supabase/supabase-js@2",
+    "djwt": "https://deno.land/x/djwt@v2.8/mod.ts"
+  }
+}
