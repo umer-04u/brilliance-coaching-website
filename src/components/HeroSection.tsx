@@ -3,24 +3,28 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
+import { Boxes } from "@/components/ui/background-boxes";
+import { cn } from "@/lib/utils"; 
 
 export default function HeroSection() {
   return (
-    <motion.section
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="text-white flex items-center justify-center min-h-screen"
-    >
-      <div className="text-center p-6 relative z-10">
+    <div className="min-h-screen relative w-full overflow-hidden bg-slate-900 flex flex-col items-center justify-center rounded-lg">
+      {/* --- YEH NAYA BACKGROUND HAI --- */}
+      <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
+      <Boxes />
+
+      {/* --- YEH AAPKA PURANA CONTENT AUR BUTTON HAI (z-20 ke saath) --- */}
+        {/* Glow effect ke liye wrapper */}
         <div className="relative inline-block">
+          {/* Glow element (background mein) */}
           <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-3xl opacity-40"></div>
 
+          {/* Heading (glow ke upar) */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative text-5xl md:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500"
+            className="relative z-30 text-5xl md:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500"
           >
             Unlock Your Potential
           </motion.h1>
@@ -30,26 +34,25 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto mt-4"
+          className="relatize z-30 text-xl text-gray-300 mb-8 max-w-2xl mx-auto mt-4"
         >
-          Join Brilliance Coaching Academy and excel in your journey.
+          Join Brilliance Coaching Academy and excel in your Computer Science
+          journey.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          className="relative z-30"
         >
           <Link href="#courses-section">
-            <button className="text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-500/30">
-              Explore Our Courses 
-              {/*<FaArrowRight className="mt-1" />*/}
+            {/* --- AAPKA PURANA BUTTON --- */}
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105">
+              Explore Our Courses
             </button>
           </Link>
         </motion.div>
-      </div>
-    </motion.section>
+    </div>
   );
 }
