@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
 import { Boxes } from "@/components/ui/background-boxes";
 import { cn } from "@/lib/utils";
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 
 export default function HeroSection() {
@@ -54,9 +55,13 @@ export default function HeroSection() {
       >
         <Link href="#courses-section">
           {/* --- AAPKA PURANA BUTTON --- */}
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105">
-            Explore Our Courses
-          </button>
+          <HoverBorderGradient
+            containerClassName="rounded-full"
+            as="button"
+            className="dark:bg-gradient-to-r from-blue-500 to-purple-600 bg-blue-600 text-gray-800 dark:text-gray-800 font-bold flex items-center space-x-2"
+          >
+            <span>Explore Our Courses</span>
+          </HoverBorderGradient>
         </Link>
       </motion.div>
     </div>
