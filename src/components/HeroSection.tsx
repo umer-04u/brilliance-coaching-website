@@ -37,7 +37,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="relative text-5xl md:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" // Wrapper ko poori width di
+          className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" // Wrapper ko poori width di
         >
           Unlock Your Potential
         </motion.div>
@@ -45,7 +45,7 @@ export default function HeroSection() {
       <TypewriterEffectSmooth
         words={words}
         // Wrapper div ki saari classes yahan move kar di
-        className="relative z-20 text-xl text-gray-300 mb-8 mx-auto mt-4"
+        className="relative z-20 text-lg sm:text-xl text-gray-300 mb-8 mx-auto mt-4"
       />
       <motion.div
         initial={{ opacity: 0, y: 20 }}

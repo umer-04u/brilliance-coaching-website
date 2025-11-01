@@ -122,7 +122,7 @@ export const FloatingNav = ({
           duration: 0.2,
         }}
         className={cn(
-          "flex max-w-fit fixed top-10 inset-x-0 mx-auto border border-white/[0.2] rounded-full bg-black shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] z-[5000] pr-2 pl-8 py-2 items-center justify-center space-x-4",
+          "flex max-w-fit fixed top-10 inset-x-0 mx-auto border border-white/[0.2] rounded-full bg-gradient-to-r from-black/80 via-neutral-900/80 to-black/80 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] z-[5000] pr-2 pl-8 py-2 items-center justify-center space-x-4",
           className
         )}
       >
@@ -131,7 +131,7 @@ export const FloatingNav = ({
             key={`link=${idx}`}
             href={navItem.link}
             className={cn(
-              "relative text-neutral-50 items-center flex space-x-1 hover:text-neutral-300"
+              "relative text-white items-center flex space-x-1 hover:text-cyan-600"
             )}
           >
             <span className="block sm:hidden">{navItem.icon}</span>
@@ -143,7 +143,7 @@ export const FloatingNav = ({
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
-            className="border text-sm font-medium relative border-red-500/50 text-red-500 px-4 py-2 rounded-full"
+            className="border text-sm font-medium relative text-white border-red-500/50 hover:text-red-700 hover:font-bold bg-gradient-to-tr from-black/80 via-red-800/80 to-black/80 px-4 py-2 rounded-full"
           >
             <span>Logout</span>
             <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-red-500 to-transparent h-px" />
@@ -152,25 +152,25 @@ export const FloatingNav = ({
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="border text-sm font-medium relative border-white/[0.2] text-white px-4 py-2 rounded-full"
+              className="border text-sm font-medium relative border-white/[0.2] text-white px-4 py-2 rounded-full hover:text-cyan-600"
             >
               <span>Login</span>
               <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-black/80 backdrop-blur-lg shadow-lg py-2 z-30 border border-white/[0.2] rounded-xl">
+              <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-gradient-to-r from-neutral-900/80 to-black/80 backdrop-blur-lg shadow-lg py-2 z-30 border border-white/[0.2] rounded-xl">
                 <Link
                   href="/student-login"
                   onClick={() => setIsDropdownOpen(false)}
-                  className="block px-4 py-2 text-sm text-neutral-200 hover:text-white hover:bg-gradient-to-r from-transparent via-neutral-900 to-transparent transition-colors duration-200"
+                  className="block px-4 py-2 text-sm text-neutral-200 hover:text-cyan-500 hover:bg-gradient-to-r from-transparent via-neutral-900 to-transparent transition-colors duration-200"
                 >
                   Student Login
                 </Link>
                 <Link
                   href="/teacher-login"
                   onClick={() => setIsDropdownOpen(false)}
-                  className="block px-4 py-2 text-sm text-neutral-200 hover:text-white hover:bg-gradient-to-r from-transparent via-neutral-900 to-transparent transition-colors duration-200"
+                  className="block px-4 py-2 text-sm text-neutral-200 hover:text-cyan-500 hover:bg-gradient-to-r from-transparent via-neutral-900 to-transparent transition-colors duration-200"
                 >
                   Teacher Login
                 </Link>
