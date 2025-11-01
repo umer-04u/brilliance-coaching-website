@@ -31,14 +31,14 @@ export default function CoursesSection() {
   }
 
   return (
-    <section id="courses-section" className="bg-gray-900 py-20">
+    <section id="courses-section" className="bg-gray-900 py-12 md:py-16">
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-center text-white mb-12">
           Courses We Offer
         </h2>
 
         {/* Grid container ko 'items-stretch' diya gaya hai */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-6 items-stretch">
           {courses.map((course: Course) => (
             // CardContainer ko 'h-full' diya gaya hai
             <CardContainer key={course.id} className="inter-var h-full">

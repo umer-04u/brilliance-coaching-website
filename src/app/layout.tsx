@@ -22,17 +22,17 @@ const navItems = [
   {
     name: "Home",
     link: "/",
-    icon: <IconHome className="h-4 w-4 text-white" />,
+    icon: <IconHome className="h-4 w-4 text-white hover:text-cyan-500" />,
   },
   {
     name: "About",
     link: "/about",
-    icon: <IconUser className="h-4 w-4 text-white" />,
+    icon: <IconUser className="h-4 w-4 text-white hover:text-cyan-500" />,
   },
   {
     name: "Contact",
     link: "/contact",
-    icon: <IconMessage className="h-4 w-4 text-white" />,
+    icon: <IconMessage className="h-4 w-4 text-white hover:text-cyan-500" />,
   },
 ];
 

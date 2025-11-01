@@ -11,16 +11,15 @@ import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 export default function HeroSection() {
   const words = [
     { text: "Join" },
-    { text: "Brilliance", className: "text-blue-500 dark:text-blue-500" },
-    { text: "Coaching", className: "text-blue-500 dark:text-blue-500" },
-    { text: "Academy", className: "text-blue-500 dark:text-blue-500" },
+    { text: "Brilliance", className: "dark:text-blue-500" },
+    { text: "Coaching", className: "dark:text-blue-500" },
+    { text: "Academy", className: "dark:text-blue-500" },
     { text: "and" },
     { text: "excel" },
     { text: "in" },
     { text: "your" },
-    { text: "Computer" },
-    { text: "Science" },
-    { text: "journey." }, // Aakhiri word ko highlight kiya
+    { text: "Academic", className: "dark:text-amber-500" },
+    { text: "journey." },
   ];
   return (
     <div className="min-h-screen relative w-full overflow-hidden bg-slate-900 flex flex-col items-center justify-center rounded-lg">
