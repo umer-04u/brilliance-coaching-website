@@ -1,47 +1,42 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
-import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
+import { Carousel } from "@/components/ui/carousel"; // Naya carousel component import karein
 
-// Yahan apni gallery ki images ke naam daalein
-const images = [
-  "/images/classroom1.png",
-  "/images/coaching1.png",
-  "/images/drawing-competition.png",
-  "/images/maa-saraswati.png",
-  "/images/roof.png",
+// Aapke purane ImageGallery.tsx se images
+const slideData = [
+  {
+    title: "Classroom",
+    src: "/images/classroom1.png",
+  },
+  {
+    title: "Coaching Center",
+    src: "/images/coaching1.png",
+  },
+  {
+    title: "Drawing Competition",
+    src: "/images/drawing-competition.png",
+  },
+  {
+    title: "Saraswati Puja",
+    src: "/images/maa-saraswati.png",
+  },
+  {
+    title: "Rooftop",
+    src: "/images/roof.png",
+  },
 ];
 
 export default function ImageGallery() {
-  // Embla Carousel ko autoplay plugin ke saath set up karein
-  const [emblaRef] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 3000 }),
-  ]);
-
   return (
-    <section className="bg-gray-800 py-20">
+    <section className="bg-gradient-to-tr from-black via-neutral-700/60 to-black py-24">
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-center text-white mb-12">
           Glimpses of Our Academy
         </h2>
 
-        <div className="embla" ref={emblaRef}>
-          <div className="embla__container">
-            {images.map((src, index) => (
-              <div className="embla__slide p-2" key={index}>
-                <div className="relative h-64 md:h-80 overflow-hidden rounded-lg">
-                  <Image
-                    src={src}
-                    alt={`Coaching gallery image ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Naya Carousel Component yahan istemal karein */}
+        <div className="relative overflow-hidden w-full h-full py-20">
+          <Carousel slides={slideData} />
         </div>
       </div>
     </section>

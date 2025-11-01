@@ -29,7 +29,7 @@ export default function TeachersSection() {
   }, []);
 
   return (
-    <section className="bg-gray-800 py-20">
+    <section className="bg-gradient-to-tr from-black via-neutral-700/60 to-black py-20">
       <div className="container mx-auto px-6">
         <motion.h2
           initial={{ opacity: 0, y: -20 }}

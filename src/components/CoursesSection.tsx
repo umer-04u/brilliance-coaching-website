@@ -31,7 +31,10 @@ export default function CoursesSection() {
   }
 
   return (
-    <section id="courses-section" className="bg-gray-900 py-12 md:py-16">
+    <section
+      id="courses-section"
+      className="bg-gradient-to-tr from-black via-neutral-700/60 to-black py-12 md:py-16"
+    >
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-center text-white mb-12">
           Courses We Offer
