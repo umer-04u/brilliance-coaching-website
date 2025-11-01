@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import Navbar from "@/components/Navbar";
 import AuthGuard from "@/components/AuthGuard";
 import Link from "next/link";
 
@@ -89,7 +88,6 @@ export default function StudentDetailPage() {
 
   return (
     <AuthGuard role="teacher">
-      <Navbar />
       <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8 pb-12">
         <div className="container mx-auto">
           <Link

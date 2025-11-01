@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // <-- Router import karein
 import { supabase } from "@/lib/supabaseClient";
-import Navbar from "@/components/Navbar";
 
 export default function TeacherLoginPage() {
   const [email, setEmail] = useState("");
@@ -30,7 +29,6 @@ export default function TeacherLoginPage() {
 
   return (
     <>
-      <Navbar />
       <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 pt-20">
         <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
           <h1 className="text-3xl font-bold text-white text-center mb-6">

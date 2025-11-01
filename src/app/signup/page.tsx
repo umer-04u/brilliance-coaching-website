@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabaseClient";
-import Navbar from "@/components/Navbar";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 // Form ke data ke liye type define karein
@@ -73,7 +72,6 @@ export default function SignupPage() {
 
   return (
     <>
-      <Navbar />
       <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 pt-20">
         <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
           <h1 className="text-3xl font-bold text-white text-center mb-6">

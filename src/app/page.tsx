@@ -7,7 +7,6 @@ import ImageGallery from "@/components/ImageGallery";
 export default function HomePage() {
   return (
     <main>
-      <Navbar />
       <HeroSection />
       <ImageGallery />
       <CoursesSection />

@@ -1,9 +1,7 @@
-import Navbar from "@/components/Navbar";
 
 export default function AboutPage() {
   return (
     <>
-      <Navbar />
       <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8">
         <div className="container mx-auto py-12">
           <h1 className="text-5xl font-bold text-center mb-12">

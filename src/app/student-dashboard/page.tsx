@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import AuthGuard from "@/components/AuthGuard";
-import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabaseClient";
 
 interface StudentDetails {
@@ -237,7 +236,6 @@ export default function StudentDashboardPage() {
 
   return (
     <AuthGuard role="student">
-      <Navbar />
       <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 pb-12">
         <div className="container mx-auto">
           <h1 className="text-4xl font-bold mb-8">Student Dashboard</h1>

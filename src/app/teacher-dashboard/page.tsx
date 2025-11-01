@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import AuthGuard from "@/components/AuthGuard";
-import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabaseClient";
 import EditStudentModal from "@/components/EditStudentModal";
 import SkeletonLoader from "@/components/SkeletonLoader";
@@ -239,7 +238,6 @@ export default function TeacherDashboardPage() {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   return (
     <AuthGuard role="teacher">
-      <Navbar />
       <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8 pb-12">
         <div className="container mx-auto">
           <h1 className="text-4xl font-bold mb-8">Teacher&apos;s Dashboard</h1>
