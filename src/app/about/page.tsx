@@ -2,7 +2,7 @@
 export default function AboutPage() {
   return (
     <>
-      <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8">
+      <main className="min-h-screen bg-gradient-to-tr from-black via-neutral-700/60 to-black text-white pt-24 px-4 md:px-8">
         <div className="container mx-auto py-12">
           <h1 className="text-5xl font-bold text-center mb-12">
             About Brilliance Coaching Academy

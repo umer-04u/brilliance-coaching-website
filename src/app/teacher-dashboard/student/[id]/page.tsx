@@ -88,7 +88,7 @@ export default function StudentDetailPage() {
 
   return (
     <AuthGuard role="teacher">
-      <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8 pb-12">
+      <main className="min-h-screen bg-gradient-to-tr from-black via-neutral-700/60 to-black text-white pt-24 px-4 md:px-8 pb-12">
         <div className="container mx-auto">
           <Link
             href="/teacher-dashboard"

@@ -236,7 +236,7 @@ export default function StudentDashboardPage() {
 
   return (
     <AuthGuard role="student">
-      <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 pb-12">
+      <main className="min-h-screen bg-gradient-to-tr from-black via-neutral-700/60 to-black text-white pt-24 px-4 pb-12">
         <div className="container mx-auto">
           <h1 className="text-4xl font-bold mb-8">Student Dashboard</h1>
           {student ? (

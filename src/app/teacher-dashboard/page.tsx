@@ -238,7 +238,7 @@ export default function TeacherDashboardPage() {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   return (
     <AuthGuard role="teacher">
-      <main className="min-h-screen bg-gray-900 text-white pt-24 px-4 md:px-8 pb-12">
+      <main className="min-h-screen bg-gradient-to-tr from-black via-neutral-700/60 to-black text-white pt-24 px-4 md:px-8 pb-12">
         <div className="container mx-auto">
           <h1 className="text-4xl font-bold mb-8">Teacher&apos;s Dashboard</h1>
           <div className="bg-gray-800 p-6 rounded-lg mb-8">

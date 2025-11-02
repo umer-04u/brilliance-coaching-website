@@ -60,7 +60,7 @@ export default function StudentLoginPage() {
 
   return (
     <>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 pt-20">
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-tr from-black via-neutral-700/60 to-black pt-20">
         <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
           <h1 className="text-3xl font-bold text-white text-center mb-6">
             Student Login
