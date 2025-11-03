@@ -43,6 +43,10 @@ export const BoxesCore = ({ className, ...rest }: { className?: string }) => {
                 backgroundColor: `${getRandomColor()}`,
                 transition: { duration: 0 },
               }}
+              whileTap={{
+                backgroundColor: `${getRandomColor()}`,
+                transition: { duration: 0 },
+              }}
               animate={{
                 transition: { duration: 2 },
               }}

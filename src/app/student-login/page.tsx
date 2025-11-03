@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { BackgroundGradient } from "@/components/ui/background-gradient";
 
 export default function StudentLoginPage() {
   const [email, setEmail] = useState("");
@@ -61,7 +62,10 @@ export default function StudentLoginPage() {
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-tr from-black via-neutral-700/60 to-black pt-20">
-        <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+        <BackgroundGradient
+          containerClassName="w-full max-w-md"
+          className="bg-gray-800 rounded-[22px] p-8 shadow-lg"
+        >
           <h1 className="text-3xl font-bold text-white text-center mb-6">
             Student Login
           </h1>
@@ -77,6 +81,7 @@ export default function StudentLoginPage() {
                 id="email"
                 name="email"
                 type="email"
+                placeholder="E.g. yourname@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -94,6 +99,7 @@ export default function StudentLoginPage() {
                 id="password"
                 name="password"
                 type="password"
+                placeholder="******"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -122,7 +128,7 @@ export default function StudentLoginPage() {
               </Link>
             </p>
           </div>
-        </div>
+        </BackgroundGradient>
       </main>
     </>
   );

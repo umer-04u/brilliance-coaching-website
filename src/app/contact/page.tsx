@@ -2,21 +2,33 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Abhi ke liye, hum form data ko console par log karenge.
-    // Aage hum ise email par bhej sakte hain.
-    console.log({ name, email, message });
-    toast.success("Your message has been sent successfully!");
-    setName("");
-    setEmail("");
-    setMessage("");
+    const loadingToast = toast.loading("Sending message...");
+
+    try {
+      const { error } = await supabase.functions.invoke("send-contact-email", {
+        body: { name, email, message },
+      });
+
+      if (error) throw error;
+
+      toast.dismiss(loadingToast);
+      toast.success("Message sent successfully!");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch (error: any) {
+      toast.dismiss(loadingToast);
+      toast.error(`Error: ${error.message}`);
+    }
   };
 
   return (

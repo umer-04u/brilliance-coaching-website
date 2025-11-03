@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { supabase } from "@/lib/supabaseClient";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { BackgroundGradient } from "@/components/ui/background-gradient";
 
 // Form ke data ke liye type define karein
 type FormInputs = {
@@ -73,7 +74,10 @@ export default function SignupPage() {
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-tr from-black via-neutral-700/60 to-black pt-20">
-        <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+        <BackgroundGradient
+          containerClassName="w-full max-w-md"
+          className="bg-gray-800 rounded-[22px] p-8 shadow-lg"
+        >
           <h1 className="text-3xl font-bold text-white text-center mb-6">
             Student Registration
           </h1>
@@ -179,7 +183,7 @@ export default function SignupPage() {
               Sign Up
             </button>
           </form>
-        </div>
+        </BackgroundGradient>
       </main>
     </>
   );
