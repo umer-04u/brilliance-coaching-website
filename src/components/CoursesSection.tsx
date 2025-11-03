@@ -46,7 +46,7 @@ export default function CoursesSection() {
             // CardContainer ko 'h-full' diya gaya hai
             <CardContainer key={course.id} className="inter-var h-full">
               {/* CardBody ko 'h-full flex flex-col' diya gaya hai */}
-              <CardBody className="relative group/card bg-gray-800 hover:shadow-2xl hover:shadow-blue-500/20 border-white/[0.2] w-full h-full flex flex-col rounded-xl p-8 border">
+              <CardBody className="relative group/card bg-gradient-to-br from-black via-neutral-900 to-black hover:shadow-2xl hover:shadow-blue-500/20 border-white/[0.2] w-full h-full flex flex-col rounded-xl p-8 border">
                 <CardItem
                   translateZ="50"
                   className="text-2xl font-bold text-white mb-4"
