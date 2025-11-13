@@ -1,6 +1,7 @@
 "use client";
 import { IconArrowNarrowRight } from "@tabler/icons-react";
 import { useState, useRef, useId, useEffect } from "react";
+import Image from "next/image";
 
 // SlideData interface se 'button' hata diya
 interface SlideData {
@@ -83,16 +84,17 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
                 : "none",
           }}
         >
-          <img
-            className="absolute inset-0 w-[120%] h-[120%] object-cover opacity-100 transition-opacity duration-600 ease-in-out"
+          <Image
+            fill
+            className="absolute inset-0 w-full h-full object-cover" // w-[120%] h-[120%] hata diya
             style={{
               opacity: current === index ? 1 : 0.5,
             }}
             alt={title}
             src={src}
-            onLoad={imageLoaded}
-            loading="eager"
-            decoding="sync"
+            onLoad={imageLoaded as any} // 'as any' add kiya type error ke liye
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, 70vmin"
           />
           {current === index && (
             <div className="absolute inset-0 bg-black/30 transition-all duration-1000" />

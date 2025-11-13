@@ -1,8 +1,4 @@
-"use client"; // Ise client component banayein taaki Supabase call aasan ho
-
-import { supabase } from "@/lib/supabaseClient";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
-import { useState, useEffect } from "react"; // Hooks import karein
 
 // --- YEH HAI FIX ---
 // Course type ko yahan define kiya gaya hai
@@ -12,19 +8,7 @@ interface Course {
   description: string;
 }
 
-export default function CoursesSection() {
-  const [courses, setCourses] = useState<Course[]>([]);
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      // Data ko server-side ki jagah client-side par fetch karein
-      const { data } = await supabase.from("courses").select("*");
-      if (data) {
-        setCourses(data);
-      }
-    };
-    fetchCourses();
-  }, []);
+export default function CoursesSection({ courses }: { courses: Course[] }) {
 
   if (!courses || courses.length === 0) {
     return null; // Jab tak courses load na ho, kuch na dikhayein

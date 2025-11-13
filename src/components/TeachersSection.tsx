@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 import { FaLinkedin, FaInstagram } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -15,18 +13,7 @@ interface Teacher {
   instagram_url?: string;
 }
 
-export default function TeachersSection() {
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
-
-  useEffect(() => {
-    const fetchTeachers = async () => {
-      const { data } = await supabase.from("teachers").select("*");
-      if (data) {
-        setTeachers(data);
-      }
-    };
-    fetchTeachers();
-  }, []);
+export default function TeachersSection({ teachers }: { teachers: Teacher[] }) {
 
   return (
     <section className="bg-gradient-to-tr from-black via-neutral-700/60 to-black py-20">
