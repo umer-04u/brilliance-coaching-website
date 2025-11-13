@@ -29,7 +29,7 @@ export default function TeacherDashboardPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [studentClass, setStudentClass] = useState("");
-  const [monthlyFee, setMonthlyFee] = useState("");
+  const [addStudentSubject, setAddStudentSubject] = useState(""); // Naya state
   const [feeClass, setFeeClass] = useState("");
   const [feeSubject, setFeeSubject] = useState("");
   const [feeAmount, setFeeAmount] = useState("");
@@ -87,9 +87,17 @@ export default function TeacherDashboardPage() {
     e.preventDefault();
     const loadingToast = toast.loading("Adding student...");
 
+    // Step 1: User ko register karein trigger ke liye data ke saath
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: email,
       password: password,
+      options: {
+        data: {
+          full_name: name,
+          class: parseInt(studentClass, 10),
+          subject: addStudentSubject, // Naya state yahan istemal karein
+        },
+      },
     });
 
     if (authError) {
@@ -98,30 +106,24 @@ export default function TeacherDashboardPage() {
       return;
     }
 
+    // Step 2: Trigger 'pending' status set karega, hum use 'active' karenge
     if (authData.user) {
-      const monthlyFeeValue = parseFloat(monthlyFee);
-      const { error: insertError } = await supabase.from("students").insert({
-        id: authData.user.id,
-        name: name,
-        email: email,
-        class: parseInt(studentClass, 10),
-        monthly_fee: monthlyFeeValue,
-        due_fee: monthlyFeeValue,
-        status: "active",
-        joining_date: new Date().toISOString(),
-      });
+      const { error: updateError } = await supabase
+        .from("students")
+        .update({ status: "active", joining_date: new Date().toISOString() })
+        .eq("id", authData.user.id);
 
-      if (insertError) {
+      if (updateError) {
         toast.dismiss(loadingToast);
-        toast.error(`Profile Error: ${insertError.message}`);
+        toast.error(`Profile Error: ${updateError.message}`);
       } else {
         toast.dismiss(loadingToast);
-        toast.success("Student added successfully!");
+        toast.success("Student added and approved successfully!");
         setName("");
         setEmail("");
         setPassword("");
         setStudentClass("");
-        setMonthlyFee("");
+        setAddStudentSubject(""); // Naya state clear karein
         fetchStudents();
       }
     }
@@ -282,14 +284,23 @@ export default function TeacherDashboardPage() {
                 required
                 className="bg-gray-700 p-2 rounded"
               />
-              <input
-                type="number"
-                placeholder="Monthly Fee"
-                value={monthlyFee}
-                onChange={(e) => setMonthlyFee(e.target.value)}
+              <select
+                value={addStudentSubject}
+                onChange={(e) => setAddStudentSubject(e.target.value)}
                 required
                 className="bg-gray-700 p-2 rounded"
-              />
+              >
+                <option value="">Select Subject</option>
+                {feesList
+                  .filter(
+                    (fee: any) => fee.class === parseInt(studentClass, 10)
+                  ) // Class ke hisaab se filter
+                  .map((fee: any) => (
+                    <option key={fee.subject} value={fee.subject}>
+                      {fee.subject}
+                    </option>
+                  ))}
+              </select>
               <button
                 type="submit"
                 className="bg-blue-600 hover:bg-blue-700 p-2 rounded"
